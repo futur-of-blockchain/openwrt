@@ -8,7 +8,7 @@
 
 / {
 	compatible = "morse,artini", "mediatek,mt7621-soc";
-	model = "MorseMicro Artini";
+	model = "MorseMicro HaLowLink 1";
 
 	aliases {
 		led-boot = &led1_green;

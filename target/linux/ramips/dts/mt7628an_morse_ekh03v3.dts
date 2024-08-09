@@ -2,7 +2,7 @@
 
 / {
 	compatible = "morse,ekh03v3", "mediatek,mt7628an-soc";
-	model = "EKH03-03";
+	model = "MorseMicro EKH03-03";
 
 	aliases {
 		led-boot = &led_boot;

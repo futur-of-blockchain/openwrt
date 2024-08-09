@@ -178,10 +178,6 @@ define Package/base-files/install
 		$(1)/usr/lib/os-release
 
 
-	$(if $(call qstrip,$(CONFIG_VERSION_MANUFACTURER)), \
-		$(VERSION_SED_SCRIPT) $(1)/lib/preinit/03_sysinfo_device_title, \
-		rm -f $(1)/lib/preinit/03_sysinfo_device_title)
-
 	$(SED) "s#%PATH%#$(TARGET_INIT_PATH)#g" \
 		$(1)/sbin/hotplug-call \
 		$(1)/etc/preinit \

@@ -2,7 +2,9 @@
 
 / {
 	compatible = "morse,ekh03v4", "mediatek,mt7628an-soc";
-	model = "EKH03";
+	// Hotplug script will add a version here (currently -05US),
+	// so we leave this without a v4.
+	model = "MorseMicro EKH03";
 
 	aliases {
 		led-boot = &led_boot;

@@ -1051,7 +1051,7 @@ TARGET_DEVICES += zyxel_keenetic-extra-ii
 
 define Device/morse_ekh03
   IMAGE_SIZE := 32448k
-  DEVICE_VENDOR := Morse Micro
+  DEVICE_VENDOR := MorseMicro
   DEVICE_MODEL := EKH03
   DEVICE_VARIANT :=
   # Simplify by removing board and OpenWRT version.

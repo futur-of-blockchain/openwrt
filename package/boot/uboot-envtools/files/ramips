@@ -37,7 +37,7 @@ yuncore,ax820)
 	;;
 morse,artini)
 	ubootenv_add_uci_config "/dev/mtd2" "0x0" "0x1000" "0x1000"
-	ubootenv_add_uci_sys_config "/dev/mtd1" "0x0" "0x1000" "0x1000"
+	ubootenv_add_uci_sys_config "/dev/mtd1" "0x0" "0x8000" "0x1000"
 	;;
 arcadyan,we420223-99)
 	ubootenv_add_uci_config "/dev/mtd2" "0x0" "0x1000" "0x1000"

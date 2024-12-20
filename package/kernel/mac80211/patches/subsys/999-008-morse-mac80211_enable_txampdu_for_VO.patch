@@ -1,0 +1,13 @@
+diff --git a/net/mac80211/tx.c b/net/mac80211/tx.c
+index fe99fee..a6b659d 100644
+--- a/net/mac80211/tx.c
++++ b/net/mac80211/tx.c
+@@ -1203,7 +1203,7 @@ ieee80211_aggr_check(struct ieee80211_sub_if_data *sdata,
+ 		return;
+ 
+ 	if (!sta || !sta->sta.deflink.ht_cap.ht_supported ||
+-	    !sta->sta.wme || skb_get_queue_mapping(skb) == IEEE80211_AC_VO ||
++	    !sta->sta.wme ||
+ 	    skb->protocol == sdata->control_port_protocol)
+ 		return;
+ 

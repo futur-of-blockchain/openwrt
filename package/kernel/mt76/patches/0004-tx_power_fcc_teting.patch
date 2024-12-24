@@ -1,0 +1,100 @@
+diff --git a/mt7603/mcu.c b/mt7603/mcu.c
+index 301668c..aa166f6 100644
+--- a/mt7603/mcu.c
++++ b/mt7603/mcu.c
+@@ -337,8 +337,69 @@ int mt7603_mcu_set_eeprom(struct mt7603_dev *dev)
+ 	return ret;
+ }
+ 
++/* 
++   Define the power conversion function.
++   eeprom_val: value read from eeprom.
++   adjuct_val: the adjusted power multiplied by 2 (dbm x2).
++*/
++static u8 set_delta(u8 eeprom_val, int adjuct_val) {
++	int intValue = adjuct_val;
++	u8 result = 0;
++
++	int isPositive = (eeprom_val & 0x40) >> 6;
++	int valuePart = eeprom_val & 0x3F;
++	if (isPositive == 0) {
++		valuePart = -valuePart;
++	}
++
++	intValue += valuePart;
++
++	if (intValue < 0) {
++		result |= 0x80;
++		intValue = -intValue;
++	} else {
++		result |= 0xc0;
++	}
++	result |= intValue & 0x3F;
++	return result;
++}
++
++#define NUMBER_OF_CHANNELS 14
++#define NUMBER_OF_RATES_PER_CHANNEL 14
++/* This table contains the adjust value to values that are read from eeprom. PLESE NOTE that
++ * the values are multiplied by 2 in the table. i.e. if you want to reduce the tx power by 
++ * 4.5dbm, you need to set it to -9 in the table.
++*/
++static int rate_tx_power_adjust_table [NUMBER_OF_RATES_PER_CHANNEL][NUMBER_OF_CHANNELS]=
++{
++/*  CHANNEL  ->      1    2    3    4    5    6    7    8    9   10   11   12   13   14 */
++/*    RATE    */
++
++/*     CCK_1_2M*/  {-6  ,-2  ,-2  ,-2  ,-2  ,-2  ,-2  ,-2  ,-2  ,-2  ,-6  ,-6  ,-6  , 0  },
++/*    CCK_5_11M*/  {-6  ,-2  ,-2  ,-2  ,-2  ,-2  ,-2  ,-2  ,-2  ,-2  ,-6  ,-6  ,-6  , 0  },
++
++/*    OFDM_6_9M*/  {-8  ,-2  ,-2  ,-2  ,-2  ,-2  ,-2  ,-2  ,-2  ,-2  ,-6  ,-6  ,-6  , 0  },
++/*  OFDM_12_18M*/  {-8  ,-2  ,-2  ,-2  ,-2  ,-2  ,-2  ,-2  ,-2  ,-2  ,-6  ,-6  ,-6  , 0  },
++/*  OFDM_24_36M*/  {-9  ,-2  ,-2  ,-2  ,-2  ,-2  ,-2  ,-2  ,-2  ,-2  ,-7  ,-7  ,-7  , 0  },
++/*     OFDM_48M*/  {-3  ,-3  ,-3  ,-3  ,-3  ,-3  ,-3  ,-3  ,-3  ,-3  ,-3  ,-3  ,-3  , 0  },
++/*     OFDM_54M*/  {-3  ,-3  ,-3  ,-3  ,-3  ,-3  ,-3  ,-3  ,-3  ,-3  ,-3  ,-3  ,-3  , 0  },
++
++/*      MCS_0_8*/  {-10 ,-3  ,-2  ,-2  ,-4  ,-4  ,-1  ,-1  ,-1  ,-1  ,-10 ,-10 ,-10 , 0  },
++/*       MCS_32*/  { 0  , 0  , 0  , 0  , 0  , 0  , 0  , 0  , 0  , 0  , 0  , 0  , 0  , 0  },
++/* MCS_1_2_9_10*/  {-10 ,-3  ,-2  ,-2  ,-4  ,-4  ,-1  ,-1  ,-1  ,-1  ,-10 ,-10 ,-10 , 0  },
++/*MCS_3_4_11_12*/  {-10 ,-3  ,-2  ,-2  ,-4  ,-4  ,-2  ,-2  ,-2  ,-2  ,-10 ,-10 ,-10 , 0  },
++/*     MCS_5_13*/  {-6  ,-2  ,-2  ,-2  ,-2  ,-2  ,-2  ,-2  ,-2  ,-2  ,-6  ,-6  ,-6  , 0  },
++/*     MCS_6_14*/  {-6  ,-2  ,-2  ,-2  ,-2  ,-2  ,-2  ,-2  ,-2  ,-2  ,-6  ,-6  ,-6  , 0  },
++/*     MCS_7_15*/  {-6  ,-2  ,-2  ,-2  ,-2  ,-2  ,-2  ,-2  ,-2  ,-2  ,-6  ,-6  ,-6  , 0  }
++};
++
++static int bw_tx_power_adjust_table [NUMBER_OF_CHANNELS]=
++/*  CHANNEL  ->      1    2    3    4    5    6    7    8    9   10   11   12   13   14 */
++/*        40M*/    {-5  ,-8  ,-6  ,-5  ,-5  ,-8  , 0  , 0  , 0  , 0  ,-6  ,-6  ,-6  , 0  };
++
+ static int mt7603_mcu_set_tx_power(struct mt7603_dev *dev)
+ {
++	int i;
+ 	struct {
+ 		u8 center_channel;
+ 		u8 tssi;
+@@ -370,10 +431,25 @@ static int mt7603_mcu_set_tx_power(struct mt7603_dev *dev)
+ #undef EEP_VAL
+ 	};
+ 	u8 *eep = (u8 *)dev->mt76.eeprom.data;
++	int bw_tx_power_adjust = bw_tx_power_adjust_table[req.center_channel - 1];
+ 
+ 	memcpy(req.rate_power_delta, eep + MT_EE_TX_POWER_CCK,
+ 	       sizeof(req.rate_power_delta));
+ 
++	for( i=0 ; i<NUMBER_OF_RATES_PER_CHANNEL ; i++)
++	{
++		int rate_tx_pw_adjust = rate_tx_power_adjust_table[i][req.center_channel - 1];
++		if (rate_tx_pw_adjust)
++		{
++			req.rate_power_delta[i] = set_delta(req.rate_power_delta[i], rate_tx_pw_adjust);
++		}
++	}
++
++	if (bw_tx_power_adjust)
++	{
++		req.bw_power_delta = set_delta(0x80, bw_tx_power_adjust);
++	}
++
+ 	memcpy(req.temp_comp_power, eep + MT_EE_STEP_NUM_NEG_6_7,
+ 	       sizeof(req.temp_comp_power));
+ 

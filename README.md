@@ -19,19 +19,6 @@ For example, to build for an EKH01
 > ./scripts/morse_setup.sh -i -b ekh01
 ```
 
-Target configuration files provided by this repository include
-
-| Board       | Target                    |
-|-------------|-------------------------- |
-| EKH03v3     | `ekh03v3`                 |
-| EKH03v4     | `ekh03v4`                 |
-| EKH01v1     | `ekh01v1`                 |
-| EKH01v2     | `ekh01v2`                 |
-| EKH01-03    | `ekh01-03`                |
-| EKH01       | `ekh01`                   |
-| HL1         | `artini`                  |
-
-
 After configuration is complete, run the build with
 ```
 > make -j8

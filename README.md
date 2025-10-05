@@ -14,10 +14,23 @@ Install build environment packages with
 
 Run the `./scripts/morse_setup.sh` script to configure the build for your board of choice. Custom boards can be added to the `boards` folder and used as a target. See an existing board for the information which should be contained in the diffconfigs.
 
-For example, to build for an EKH01
+For example, to build for a HaLowLink1
 ```
-> ./scripts/morse_setup.sh -i -b ekh01
+> ./scripts/morse_setup.sh -i -b halowlink1
 ```
+
+Some targets provided by this repository include
+
+| Board              | Target                    |
+|--------------------|-------------------------- |
+| MMx108-EKH01 (SDIO)| `mmx108-ekh01-sdio`       |
+| MM6108-EKH01 (SPI) | `mm6108-ekh01-spi`        |
+| MM8108-EKH01 (SPI) | `mm8108-ekh01-spi`        |
+| HaLowLink1         | `halowlink1`              |
+| MM8108-EKH19       | `ekh19`                   |
+
+See the `boards/` folder for other targets and families.
+
 
 After configuration is complete, run the build with
 ```

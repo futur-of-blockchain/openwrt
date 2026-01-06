@@ -32,6 +32,15 @@ Target configuration files provided by this repository include
 | HL1         | `artini`                  |
 
 
+### Apply Post World specificities
+
+This script apply patch(es) and build configuration to the project
+```
+> ./scripts/pwst.sh
+```
+
+### Compile firmware and package
+
 After configuration is complete, run the build with
 ```
 > make -j8

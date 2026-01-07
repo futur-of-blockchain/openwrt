@@ -1,0 +1,27 @@
+--- ./target/linux/bcm27xx/image/boards/ekh01/distroconfig.txt	2025-12-30 10:04:36.653098163 +0100
++++ ./target/linux/bcm27xx/image/boards/ekh01/distroconfig2.txt	2026-01-05 23:20:38.712475281 +0100
+@@ -27,17 +27,21 @@
+ # enable uart
+ uart_enable=1
+ 
++########################################################################
++# PWS project, morse MM6108 device is use as SPI only, therefore SDIO
++# conflict with builtin WiFi can be removed.
+ #enable sdio
+-dtoverlay=sdio,poll_once=on
++#dtoverlay=sdio,poll_once=on
+ 
+ #setup sub 50MHz SDIO clock
+-dtparam=sdio_overclock=42
++#dtparam=sdio_overclock=42
+ 
+ #enable uart5
+ dtoverlay=uart5
+ 
+ #enable morse gpio configuration
+-dtoverlay=mm_wlan
++#dtoverlay=mm_wlan
++########################################################################
+ 
+ #adds morse-ps device tree
+ dtoverlay=morse-ps

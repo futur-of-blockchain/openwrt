@@ -19,9 +19,8 @@ patch -p1 < ./patches-pwst/rpi4b-sdio-wifi.patch
 (
   # To apply in the external Git dependency Morse Micro feeds
   cd ./feeds/morse
+  # In case the source changed, restore it first
   git restore kernel/mm-board-config/Makefile
-  git restore kernel/morse-fw/Makefile
-  git restore utils/smart-manager/Makefile
   patch -p1 < ../../patches-pwst/morse-feeds.patch
 )
 

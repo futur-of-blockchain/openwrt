@@ -16,7 +16,7 @@ Run the `./scripts/morse_setup.sh` script to configure the build for your board 
 
 For example, to build for an EKH01
 ```
-> ./scripts/morse_setup.sh -i -b ekh01
+> ./scripts/morse_setup.sh -i -b ekh01 -x spi
 ```
 
 Target configuration files provided by this repository include

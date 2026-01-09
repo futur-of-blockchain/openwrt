@@ -22,6 +22,7 @@ patch -p1 < ./patches-pwst/rpi4b-sdio-wifi.patch
   # In case the source changed, restore it first
   git restore kernel/mm-board-config/Makefile
   git restore netifd-morse/lib/wifi/morse.sh
+  git restore kernel/morse_driver/Config.in
   patch -p1 < ../../patches-pwst/morse-feeds.patch
 )
 

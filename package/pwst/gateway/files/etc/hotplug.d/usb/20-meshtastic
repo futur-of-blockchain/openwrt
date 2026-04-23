@@ -1,0 +1,64 @@
+#!/bin/sh
+#
+# /etc/hotplug.d/usb/20-meshtastic
+# Reacts to Meshtastic USB device add/remove events by updating the
+# .env conffile and restarting the gateway service.
+#
+
+LOGFILE="/var/log/subghzgateway.log"
+
+log_msg() {
+    echo "$(date '+%Y-%m-%d %H:%M:%S') - hotplug: $1" >> "$LOGFILE"
+}
+
+# $PRODUCT is in the form "vid/pid/bcd" with values as hex *without* leading
+# zeros (e.g., "10c4/ea60/100"). We normalize to "vid:pid" zero-padded to 4
+# hex digits for matching.
+normalize_product() {
+    vid=$(echo "$1" | cut -d/ -f1)
+    pid=$(echo "$1" | cut -d/ -f2)
+    printf '%04s:%04s' "$vid" "$pid" | tr ' ' '0'
+}
+
+is_meshtastic_device() {
+    case "$1" in
+        # Silicon Labs CP210x
+        10c4:ea60|10c4:ea70|10c4:ea71|10c4:ea80) return 0 ;;
+        # WCH (QinHeng) CH34x / CH91xx
+        1a86:7523|1a86:5523|1a86:55d2|1a86:55d3|1a86:55d4|1a86:55d5) return 0 ;;
+        # Espressif native USB (ESP32-S2/S3/C3/C6/H2)
+        303a:1001|303a:1002|303a:0002) return 0 ;;
+        # FTDI (less common but compatible)
+        0403:6001|0403:6010|0403:6011|0403:6014|0403:6015) return 0 ;;
+        # Prolific (rare but possible)
+        067b:2303|067b:2304) return 0 ;;
+        # nRF52 / RP2040 / native USB boards
+        239a:8029|239a:80c6|1915:521f|2e8a:0003|2e8a:000a) return 0 ;;
+    esac
+    return 1
+}
+
+# Only react to USB devices with a PRODUCT string
+[ -n "$PRODUCT" ] || exit 0
+
+VIDPID=$(normalize_product "$PRODUCT")
+
+if ! is_meshtastic_device "$VIDPID"; then
+    exit 0
+fi
+
+case "$ACTION" in
+    add)
+        log_msg "Meshtastic device added ($VIDPID), updating config and restarting service"
+        # Give the kernel a moment to create /dev/ttyUSB* or /dev/ttyACM*
+        sleep 2
+        /usr/bin/update-conf.sh >> "$LOGFILE" 2>&1
+        /etc/init.d/pwst-gateway restart >> "$LOGFILE" 2>&1
+        ;;
+    remove)
+        log_msg "Meshtastic device removed ($VIDPID), stopping service"
+        /etc/init.d/pwst-gateway stop >> "$LOGFILE" 2>&1
+        ;;
+esac
+
+exit 0

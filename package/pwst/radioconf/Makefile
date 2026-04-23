@@ -14,7 +14,8 @@ define Package/pwst-radioconf
 endef
 
 define Package/pwst-radioconf/description
-  Script that run on boot to check and configure MM610X-H06 for EU. 
+  Script that run on boot to check and configure MM610X-H06 for EU.
+  Includes hotplug script to reapply settings when radio config changes.
 endef
 
 define Build/Compile
@@ -24,8 +25,12 @@ endef
 define Package/pwst-radioconf/install
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_BIN) ./files/usr/bin/healthchek-n-conf.sh $(1)/usr/bin/
+
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/etc/init.d/radioconf $(1)/etc/init.d/
+
+	$(INSTALL_DIR) $(1)/etc/hotplug.d/net
+	$(INSTALL_BIN) ./files/etc/hotplug.d/net/99-pwst-radio-conf $(1)/etc/hotplug.d/net/99-pwst-radio-conf
 endef
 
 define Package/pwst-radioconf/postinst
@@ -35,6 +40,7 @@ define Package/pwst-radioconf/postinst
 	mkdir -p /var/log
 	touch /var/log/radioconf.log
 	chmod 644 /var/log/radioconf.log
+
 	# Enable and start service
 	/etc/init.d/radioconf enable
 	/etc/init.d/radioconf start
@@ -44,8 +50,10 @@ endef
 define Package/pwst-radioconf/prerm
 #!/bin/sh
 [ -n "$${IPKG_INSTROOT}" ] || {
-	/etc/init.d/radioconf stop
-	/etc/init.d/radioconf disable
+	if [ -x /etc/init.d/radioconf ]; then
+		/etc/init.d/radioconf stop 2>/dev/null || true
+		/etc/init.d/radioconf disable 2>/dev/null || true
+	fi
 }
 endef
 

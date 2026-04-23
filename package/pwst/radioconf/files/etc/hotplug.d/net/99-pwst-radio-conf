@@ -1,0 +1,21 @@
+#!/bin/sh
+
+# Only trigger for wlan0 (radio0 mesh interface)
+[ "$INTERFACE" = "wlan0" ] || exit 0
+
+# Only act on add events (when interface is created/brought up)
+[ "$ACTION" = "add" ] || exit 0
+
+# Verify this is the Morse device by checking DEVPATH
+echo "$DEVPATH" | grep -q "fe204000.spi" || exit 0
+
+# Log for debugging
+logger -t morse-duty-cycle "radio0 (wlan0) add event detected"
+
+# Wait for radio to be fully initialized
+sleep 3
+
+# Execute your duty cycle configuration script
+/usr/bin/healthchek-n-conf.sh
+
+logger -t morse-duty-cycle "Duty cycle settings applied to radio0"

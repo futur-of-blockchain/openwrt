@@ -4,7 +4,7 @@ PKG_NAME:=pwst-gateway
 PKG_VERSION:=1.0
 PKG_RELEASE:=1
 
-GATEWAY_DIR:=blockchain-lora-wifi-gateway-20260112-094902
+GATEWAY_DIR:=blockchain-lora-wifi-gateway-20260424-124409
 GATEWAY_INSTALL_PATH:=/usr/share/pwst/gateway/$(GATEWAY_DIR)
 
 include $(INCLUDE_DIR)/package.mk

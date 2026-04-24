@@ -7,7 +7,7 @@
 
 set -e
 
-ENV_FILE="/usr/share/pwst/gateway/blockchain-lora-wifi-gateway-20260112-094902/docker.env"
+ENV_FILE="/usr/share/pwst/gateway/blockchain-lora-wifi-gateway-20260424-124409/docker.env"
 KEY="MESHTASTIC_SERIAL_PORT"
 
 # --- Sanity checks -----------------------------------------------------------

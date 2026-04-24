@@ -3,7 +3,7 @@
 # Log file location
 readonly LOGFILE="/var/log/subghzgateway.log"
 readonly MAX_LOG_SIZE=102400  # 100KB in bytes
-readonly GATEWAY_PACKAGED_CODE="blockchain-lora-wifi-gateway-20260112-094902"
+readonly GATEWAY_PACKAGED_CODE="blockchain-lora-wifi-gateway-20260424-124409"
 readonly GATEWAY_PACKAGED_CODE_TAR="${GATEWAY_PACKAGED_CODE}.tar.gz"
 readonly PACKAGE_DIR="/usr/share/pwst/gateway/"
 readonly TARGET_DIR="${PACKAGE_DIR}${GATEWAY_PACKAGED_CODE}"

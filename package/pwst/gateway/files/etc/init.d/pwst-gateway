@@ -5,7 +5,7 @@ STOP=10
 
 USE_PROCD=1
 
-WORKDIR="/usr/share/pwst/gateway/blockchain-lora-wifi-gateway-20260112-094902"
+WORKDIR="/usr/share/pwst/gateway/blockchain-lora-wifi-gateway-20260424-124409"
 
 start_service() {
     procd_open_instance
